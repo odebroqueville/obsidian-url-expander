@@ -1,4 +1,8 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+
+// Import the library to unshorten urls
+import Deshortifier from 'deshortify'
 
 // Remember to rename these classes and interfaces!
 
@@ -9,6 +13,15 @@ interface MyPluginSettings {
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
+
+// Regex to validate any url
+// eslint-disable-next-line no-control-regex
+const regex = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+	    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+	    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+	    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+	    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+	    '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -38,11 +51,17 @@ export default class MyPlugin extends Plugin {
 		});
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
+			id: 'expand-single-url',
+			name: 'Expand single url',
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				// Create an instance
+				const deshortifier = new Deshortifier({ verbose: true });
+				const shortUrl:string = editor.getSelection();
+				let longUrl:string = shortUrl;
+				if (this.validate(shortUrl)) {
+					longUrl = await deshortifier.deshortify(shortUrl);
+				}
+				editor.replaceSelection(longUrl);
 			}
 		});
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
@@ -76,6 +95,14 @@ export default class MyPlugin extends Plugin {
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+	}
+
+	validate(url:string) {
+		if (regex.test(url)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	onunload() {
