@@ -2,7 +2,7 @@
 
 This is a plugin for Obsidian (https://obsidian.md).
 
-The plugin essentially expands shortened urls (e.g. bit.ly, t.co, etc.) to their more descriptive long version as a Markdown link. The plugin was created to have more descriptivee links than the ones imported from tweets via Readwise, for example. 
+The plugin essentially expands shortened urls (e.g. bit.ly, t.co, etc.) to their long version as a Markdown link. The plugin was created to have more descriptivee links than the ones imported from tweets via Readwise, for example. 
 
 ## Commands made available by the plugin
 
