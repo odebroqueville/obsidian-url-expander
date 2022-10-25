@@ -26,8 +26,8 @@ export const expandLinksAndSaveInSingleFile = async (mdFile: TFile, plugin: UrlE
 
 // --> Command Function: Converts All Links and Saves in Current Active File
 export const expandLinksInActiveFile = async (plugin: UrlExpanderPlugin) => {
-    const mdFile: TFile = plugin.app.workspace.getActiveFile();
-    if (mdFile.extension === 'md') {
+    const mdFile: TFile|null = plugin.app.workspace.getActiveFile();
+    if (mdFile !== null && mdFile.extension === 'md') {
         await expandLinksAndSaveInSingleFile(mdFile, plugin);
     } else {
         new Notice('Active File is not a Markdown File');
@@ -82,7 +82,10 @@ export const expandLinksInVault = async (plugin: UrlExpanderPlugin) => {
 
 const hasFrontmatter = (app: App, filePath: string, keyToCheck: string) => {
     const metaCache = app.metadataCache.getCache(filePath);
-    return metaCache.frontmatter && metaCache.frontmatter[keyToCheck];
+    if (metaCache){
+        return metaCache.frontmatter && metaCache.frontmatter[keyToCheck];
+    }
+    return false;
 };
 
 /* -------------------- LINKS TO MARKDOWN EXPANDER -------------------- */

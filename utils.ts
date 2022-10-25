@@ -11,12 +11,12 @@ const regex = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
 
 // Helper Function To Get List of Files
 export const getFilesUnderPath = (path: string, plugin: UrlExpanderPlugin): TFile[] => {
-    let filesUnderPath: TFile[] = [];
+    const filesUnderPath: TFile[] = [];
     recursiveFx(path, plugin.app);
     function recursiveFx(path: string, app: App) {
         const folderObj = app.vault.getAbstractFileByPath(path);
         if (folderObj instanceof TFolder && folderObj.children) {
-            for (let child of folderObj.children) {
+            for (const child of folderObj.children) {
                 if (child instanceof TFile && child.extension === 'md') filesUnderPath.push(child);
                 if (child instanceof TFolder) recursiveFx(child.path, app);
             }
@@ -30,20 +30,24 @@ export async function getTitle(url:string){
     try {
         const response = await fetch(url);
         if (response.status === 200){
-            const html = await response.text();
+            const html:string = await response.text();
             if (html) {
-                const title = html.match(/<title.*?>.*?<\/title>/gmi)[0];
-                if (title){
+                let title = "";
+                const titleMatches:string[] = html.match(/<title.*?>.*?<\/title>/gmi)||[];
+                if (titleMatches.length > 0) {
+                    title = titleMatches[0];
+                }
+                if (title.includes('<title')){
                     let titleText = title.substring(title.indexOf(">")+1);
                     titleText = titleText.replace("</title>","");
                     return titleText;
                 }
             }
         }
-        return "";
+        return '';
     } catch (err) {
         console.error(`Failed to retrieve title with error: ${err}`);
-        return "";
+        return '';
     }
 }
 
