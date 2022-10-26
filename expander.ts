@@ -104,6 +104,10 @@ export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin:
             // Check that the match is indeed an external link
             if (validate(match)) {
                 longUrl = await deshortifier.deshortify(match);
+                const pos = longUrl.lastIndexOf('http');
+                if (pos > 0) {
+                    longUrl = decodeURIComponent(longUrl.substring(pos))
+                }
                 title = await getTitle(match);
             }
             const mdLink = `[${title}](${decodeURI(longUrl)})`;
