@@ -108,7 +108,7 @@ export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin:
                 if (pos > 0) {
                     longUrl = decodeURIComponent(longUrl.substring(pos))
                 }
-                title = await getTitle(match);
+                title = await getTitle(longUrl);
             }
             const mdLink = `[${title}](${decodeURI(longUrl)})`;
             newMdText = newMdText.replace(match, mdLink);
