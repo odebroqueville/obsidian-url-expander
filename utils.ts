@@ -28,21 +28,26 @@ export const getFilesUnderPath = (path: string, plugin: UrlExpanderPlugin): TFil
 // Helper function to get the title of a web page
 export async function getTitle(url:string){
     try {
-        const response = await fetch(url);
-        if (response.status === 200){
-            const html:string = await response.text();
-            if (html) {
-                let title = "";
-                const titleMatches:string[] = html.match(/<title.*?>.*?<\/title>/gmi)||[];
-                if (titleMatches.length > 0) {
-                    title = titleMatches[0];
-                }
-                if (title.includes('<title')){
-                    let titleText = title.substring(title.indexOf(">")+1);
-                    titleText = titleText.replace("</title>","");
-                    return titleText;
-                }
+        const request = new Request(url, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/html'
             }
+        });
+        const response = await fetch(request);
+        const html = await response.text();
+        let title = '';
+        const titleMatches:string[] = html.match(/<title.*?>.*?<\/title>/gmi)||[];
+        if (titleMatches.length > 0) {
+            title = titleMatches[0];
+            console.log(title);
+        }
+        if (title.search(/<title/gi) !== -1){
+            const titleText = title.substring(title.indexOf('>')+1);
+            const res = titleText.replace('</title>','');
+            console.log(res);
+            return res;
         }
         return '';
     } catch (err) {
