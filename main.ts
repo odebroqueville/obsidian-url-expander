@@ -1,8 +1,8 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { Editor, MarkdownView, Menu, Plugin, TFile, addIcon } from 'obsidian';
 import { UrlExpanderSettingsTab, UrlExpanderPluginSettings, DEFAULT_SETTINGS } from './settings';
-import { ConfirmationModal } from 'modals';
-import * as Expander from 'expander';
+import { ConfirmationModal } from './modals';
+import * as Expander from './expander';
 import * as Icons from './icons';
 
 export default class UrlExpanderPlugin extends Plugin {
@@ -33,19 +33,19 @@ export default class UrlExpanderPlugin extends Plugin {
         this.addCommand({
             id: 'expand-all-links-in-active-file-to-md',
             name: 'Active File: Expand Links to Markdown',
-            callback: () => {
+            callback: async () => {
                 Expander.expandLinksInActiveFile(this);
-            },
+            }
         });
 
         this.addCommand({
             id: 'expand-all-links-in-vault-to-md',
             name: 'Vault: Expand Links to Markdown',
-            callback: () => {
+            callback: async () => {
                 const infoText = 'Are you sure you want to convert all Web Links to Markdown Links?';
                 const modal = new ConfirmationModal(this.app, infoText, () => Expander.expandLinksInVault(this));
                 modal.open();
-            },
+            }
         });
 
 		if (this.settings.contextMenu) this.app.workspace.on('file-menu', this.addFileMenuItems);
@@ -72,19 +72,19 @@ export default class UrlExpanderPlugin extends Plugin {
         menu.addItem((item) => {
             item.setTitle('Expand Selected Link to Markdown')
                 .setIcon('expandIcon')
-                .onClick(() => Expander.expandSelectedLink(this));
+                .onClick(async () => Expander.expandSelectedLink(this));
         });
 
         menu.addItem((item) => {
             item.setTitle('Expand All Links in Active Note to Markdown')
                 .setIcon('conversionIcon')
-                .onClick(() => Expander.expandLinksInActiveFile(this));
+                .onClick(async () => Expander.expandLinksInActiveFile(this));
         });
 
 		menu.addItem((item) => {
             item.setTitle('Expand All Links in Vault to Markdown')
                 .setIcon('vaultIcon')
-                .onClick(() => Expander.expandLinksInVault(this));
+                .onClick(async () => Expander.expandLinksInVault(this));
         });
 
         menu.addSeparator();

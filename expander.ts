@@ -1,4 +1,4 @@
-import UrlExpanderPlugin from 'main';
+import UrlExpanderPlugin from './main';
 import { App, TFile, Notice, TFolder, MarkdownView } from 'obsidian';
 import { getTitle, getFilesUnderPath, validate } from './utils';
 
