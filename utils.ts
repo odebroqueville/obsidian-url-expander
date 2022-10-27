@@ -28,28 +28,17 @@ export const getFilesUnderPath = (path: string, plugin: UrlExpanderPlugin): TFil
 // Helper function to get the title of a web page
 export async function getTitle(url:string){
     try {
-        const request = new Request(url, {
+        const api = 'https://good-tan-starfish-kit.cyclic.app/?url=';
+        const request = new Request(api+url, {
             method: 'GET',
             mode: 'cors',
             headers: {
-                'Content-Type': 'text/html'
+                'Content-Type': 'text/plain'
             }
         });
         const response = await fetch(request);
-        const html = await response.text();
-        let title = '';
-        const titleMatches:string[] = html.match(/<title.*?>.*?<\/title>/gmi)||[];
-        if (titleMatches.length > 0) {
-            title = titleMatches[0];
-            console.log(title);
-        }
-        if (title.search(/<title/gi) !== -1){
-            const titleText = title.substring(title.indexOf('>')+1);
-            const res = titleText.replace('</title>','');
-            console.log(res);
-            return res;
-        }
-        return '';
+        const title = await response.text();
+        return title;
     } catch (err) {
         console.error(`Failed to retrieve title with error: ${err}`);
         return '';
