@@ -8,20 +8,18 @@ import Deshortifier from 'deshortify'
 /* -------------------- EXTERNAL LINK DETECTOR -------------------- */
 
 // Regex to validate any url
-const regex = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
-	'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
-	'((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
-	'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
-	'(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
-	'(\\#[-a-z\\d_]*)?$','gi'); // validate fragment locator
+const regex = /(https:|http:|www\.)\S*/gi
 
 /* -------------------- CONVERTERS -------------------- */
 
 // --> Converts single file to provided final format and save back in the file
 export const expandLinksAndSaveInSingleFile = async (mdFile: TFile, plugin: UrlExpanderPlugin) => {
+    console.log("Hello World!");
     const fileText = await plugin.app.vault.read(mdFile);
     const newFileText = await ExpandUrlToMarkdown(fileText, mdFile, plugin);
-    await plugin.app.vault.modify(mdFile, newFileText);
+    if (newFileText !== fileText) {
+        await plugin.app.vault.modify(mdFile, newFileText);
+    }
 };
 
 // --> Command Function: Converts All Links and Saves in Current Active File
@@ -93,14 +91,23 @@ const hasFrontmatter = (app: App, filePath: string, keyToCheck: string) => {
 // --> Converts links within given string to MD
 export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin: UrlExpanderPlugin): Promise<string> => {
     let newMdText = md;
-    const deshortifier = new Deshortifier({ verbose: true });
-
     // --> Get All Links
     const matches = md.match(regex);
-    if (matches) {
-        for (const match of matches) {
+    console.log(matches);
+    if (matches === null) return md;
+    // Remove Links that are already in Markdown format
+    const remainingMatches = [];
+    for (const match of matches) {
+        if (!match.endsWith(')')) {
+            remainingMatches.push(match);
+        }
+    }
+    console.log(remainingMatches);
+    const deshortifier = new Deshortifier({ verbose: true });
+    if (remainingMatches) {
+        for (const match of remainingMatches) {
             let longUrl = match;
-            let title = "";
+            let title = '';
             // Check that the match is indeed an external link
             if (validate(match)) {
                 longUrl = await deshortifier.deshortify(match);
@@ -109,6 +116,9 @@ export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin:
                     longUrl = decodeURIComponent(longUrl.substring(pos))
                 }
                 title = await getTitle(longUrl);
+            }
+            if (title === ''){
+                title = longUrl;
             }
             const mdLink = `[${title}](${decodeURI(longUrl)})`;
             newMdText = newMdText.replace(match, mdLink);

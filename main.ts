@@ -84,7 +84,11 @@ export default class UrlExpanderPlugin extends Plugin {
 		menu.addItem((item) => {
             item.setTitle('Expand All Links in Vault to Markdown')
                 .setIcon('vaultIcon')
-                .onClick(async () => Expander.expandLinksInVault(this));
+                .onClick(async () => {
+                    const infoText = 'Are you sure you want to convert all Web Links to Markdown Links?';
+                    const modal = new ConfirmationModal(this.app, infoText, () => Expander.expandLinksInVault(this));
+                    modal.open();
+                });
         });
 
         menu.addSeparator();
