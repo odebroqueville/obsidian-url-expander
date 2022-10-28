@@ -38,7 +38,7 @@ export default class UrlExpanderPlugin extends Plugin {
             }
         });
 
-        this.addCommand({
+/*         this.addCommand({
             id: 'expand-all-links-in-vault-to-md',
             name: 'Vault: Expand Links to Markdown',
             callback: async () => {
@@ -46,7 +46,7 @@ export default class UrlExpanderPlugin extends Plugin {
                 const modal = new ConfirmationModal(this.app, infoText, () => Expander.expandLinksInVault(this));
                 modal.open();
             }
-        });
+        }); */
 
 		if (this.settings.contextMenu) this.app.workspace.on('file-menu', this.addFileMenuItems);
 	}
@@ -81,7 +81,7 @@ export default class UrlExpanderPlugin extends Plugin {
                 .onClick(async () => Expander.expandLinksInActiveFile(this));
         });
 
-		menu.addItem((item) => {
+/* 		menu.addItem((item) => {
             item.setTitle('Expand All Links in Vault to Markdown')
                 .setIcon('vaultIcon')
                 .onClick(async () => {
@@ -89,7 +89,7 @@ export default class UrlExpanderPlugin extends Plugin {
                     const modal = new ConfirmationModal(this.app, infoText, () => Expander.expandLinksInVault(this));
                     modal.open();
                 });
-        });
+        }); */
 
         menu.addSeparator();
     };

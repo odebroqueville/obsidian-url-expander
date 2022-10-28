@@ -14,7 +14,6 @@ const regex = /(https:|http:|www\.)\S*/gi
 
 // --> Converts single file to provided final format and save back in the file
 export const expandLinksAndSaveInSingleFile = async (mdFile: TFile, plugin: UrlExpanderPlugin) => {
-    console.log("Hello World!");
     const fileText = await plugin.app.vault.read(mdFile);
     const newFileText = await ExpandUrlToMarkdown(fileText, mdFile, plugin);
     if (newFileText !== fileText) {
@@ -93,7 +92,6 @@ export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin:
     let newMdText = md;
     // --> Get All Links
     const matches = md.match(regex);
-    console.log(matches);
     if (matches === null) return md;
     // Remove Links that are already in Markdown format
     const remainingMatches = [];
