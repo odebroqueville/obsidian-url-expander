@@ -6,7 +6,7 @@ The plugin essentially expands shortened urls (e.g. bit.ly, t.co, etc.) to their
 
 ## Commands made available by the plugin
 
-The plugin offers 3 commands:
+The plugin offers 2 commands:
 
 1. Expand selected link
 2. Expand all links in the active pane
