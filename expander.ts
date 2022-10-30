@@ -96,7 +96,7 @@ export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin:
     // Remove Links that are already in Markdown format
     const remainingMatches = [];
     for (const match of matches) {
-        if (!match.endsWith(')')) {
+        if (!(match.endsWith(')')||match.endsWith('.')||match.endsWith(',')||match.endsWith(':'))) {
             remainingMatches.push(match);
         }
     }
