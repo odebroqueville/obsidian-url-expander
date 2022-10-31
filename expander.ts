@@ -8,7 +8,8 @@ import Deshortifier from 'deshortify'
 /* -------------------- EXTERNAL LINK DETECTOR -------------------- */
 
 // Regex to validate any url
-const regex = /(https:|http:|www\.)\S*/gi
+const regex = /(https:|http:|www\.)\S*/gim;
+const regexMDLinks = /\((https:|http:|www\.)\S+(\)\S{0,2})/gim;
 
 /* -------------------- CONVERTERS -------------------- */
 
@@ -96,7 +97,7 @@ export const ExpandUrlToMarkdown = async (md: string, sourceFile: TFile, plugin:
     // Remove Links that are already in Markdown format
     const remainingMatches = [];
     for (const match of matches) {
-        if (!(match.endsWith(')')||match.endsWith('.')||match.endsWith(',')||match.endsWith(':'))) {
+        if (!(regexMDLinks.test(match))) {
             remainingMatches.push(match);
         }
     }
